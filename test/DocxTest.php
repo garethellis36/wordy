@@ -82,6 +82,30 @@ class DocxTest extends TestCase
         self::assertFalse($docx->hasPendingTrackedChanges(), "Failed asserting {$filename} has no pending tracked changes");
     }
 
+    /**
+     * @test
+     * @covers ::isPasswordProtected
+     * @dataProvider withPasswordProtection
+     */
+    public function it_returns_true_for_document_with_password_protection(string $filename): void
+    {
+        $docx = Docx::open(__DIR__ . "/Resources/{$filename}");
+
+        self::assertTrue($docx->isPasswordProtected(), "Failed asserting that {$filename} is password protected");
+    }
+
+    /**
+     * @test
+     * @covers ::isPasswordProtected
+     * @dataProvider withoutPasswordProtection
+     */
+    public function it_returns_false_for_document_without_password_protection(string $filename): void
+    {
+        $docx = Docx::open(__DIR__ . "/Resources/{$filename}");
+
+        self::assertFalse($docx->isPasswordProtected(), "Failed asserting that {$filename} is not password protected");
+    }
+
     public function withComments(): array
     {
         return [
@@ -125,6 +149,25 @@ class DocxTest extends TestCase
     public function withPendingTrackedChanges(): array
     {
         return [
+            ["docx_with_deleted_text_tracked_change.docx"],
+            ["docx_with_inserted_text_tracked_change.docx"],
+        ];
+    }
+
+    public function withPasswordProtection(): array
+    {
+        return [
+            ["docx_password_protected_password_is_password.docx"],
+        ];
+    }
+
+    public function withoutPasswordProtection(): array
+    {
+        return [
+            ["docx_with_all_changes_accepted.docx"],
+            ["docx_text_only.docx"],
+            ["docx_with_comment.docx"],
+            ["docx_with_image.docx"],
             ["docx_with_deleted_text_tracked_change.docx"],
             ["docx_with_inserted_text_tracked_change.docx"],
         ];
