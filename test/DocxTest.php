@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Garethellis\Wordy\Test;
 
@@ -58,6 +58,30 @@ class DocxTest extends TestCase
         self::assertFalse($docx->hasImages(), "Failed asserting {$filename} has no images");
     }
 
+    /**
+     * @test
+     * @covers ::hasPendingTrackedChanges
+     * @dataProvider withPendingTrackedChanges
+     */
+    public function it_returns_true_for_document_with_pending_tracked_changes(string $filename): void
+    {
+        $docx = Docx::open(__DIR__ . "/Resources/{$filename}");
+
+        self::assertTrue($docx->hasPendingTrackedChanges(), "Failed asserting {$filename} has pending tracked changes");
+    }
+
+    /**
+     * @test
+     * @covers ::hasPendingTrackedChanges
+     * @dataProvider withoutPendingTrackedChanges
+     */
+    public function it_returns_false_for_document_without_pending_tracked_changes(string $filename): void
+    {
+        $docx = Docx::open(__DIR__ . "/Resources/{$filename}");
+
+        self::assertFalse($docx->hasPendingTrackedChanges(), "Failed asserting {$filename} has no pending tracked changes");
+    }
+
     public function withComments(): array
     {
         return [
@@ -85,6 +109,24 @@ class DocxTest extends TestCase
         return [
             ["docx_text_only.docx"],
             ["docx_with_comment.docx"],
+        ];
+    }
+
+    public function withoutPendingTrackedChanges(): array
+    {
+        return [
+            ["docx_with_all_changes_accepted.docx"],
+            ["docx_text_only.docx"],
+            ["docx_with_comment.docx"],
+            ["docx_with_image.docx"],
+        ];
+    }
+
+    public function withPendingTrackedChanges(): array
+    {
+        return [
+            ["docx_with_deleted_text_tracked_change.docx"],
+            ["docx_with_inserted_text_tracked_change.docx"],
         ];
     }
 }
