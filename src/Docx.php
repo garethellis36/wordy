@@ -7,7 +7,7 @@ use ZipArchive;
 class Docx implements Reader
 {
     private string $file;
-    private array $zipContents;
+    private array $zipContents = [];
 
     public static function open(string $file): static
     {
@@ -39,4 +39,16 @@ class Docx implements Reader
 
         return false;
     }
+
+    public function hasImages(): bool
+    {
+        foreach ($this->zipContents as $zippedFile) {
+            $contents = $this->zipArchive->getFromName($zippedFile);
+
+            if (stripos($contents, "<pic:") !== false) {
+                return true;
+            }
+        }
+
+        return false;    }
 }

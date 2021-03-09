@@ -17,7 +17,7 @@
     "phpunit/phpunit": "^9.5"
   },
   "scripts": {
-    "test": "docker run wordy_php phpunit"
+    "test": "docker run wordy phpunit"
   },
   "autoload": {
     "psr-4": {
